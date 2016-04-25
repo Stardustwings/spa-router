@@ -23,6 +23,12 @@ spaRouter
     url: '/list2',
     templateUrl: 'partials/vegatable-list2.html'
   })
-  .otherwise('/fruit')
+  .otherwise('fruit')
 
-spaRouter.init()
+// spaRouter.html5Mode(false)
+
+window.onload = function() {
+  spaRouter.init()
+}
+
+
