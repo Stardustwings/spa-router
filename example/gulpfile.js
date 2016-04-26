@@ -6,7 +6,7 @@ gulp.task('default', function() {
   gulp.src('')
     .pipe(webserver({
       fallback: 'index.html',
-      livereload: true,
+      // livereload: true,
       // directoryListing: true,
       open: true
     }));

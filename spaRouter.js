@@ -51,7 +51,6 @@ var spaRouter = (function(window) {
       resolve(xhr.responseText)
     }
     xhr.onerror = function() {
-      // console.log('Ajax error')
       reject('Ajax error')
     }
     xhr.open('get', url)
@@ -61,11 +60,15 @@ var spaRouter = (function(window) {
   function _getTplPromise(state) {
     var url = _getTplUrlByState(state)
 
-    if (_templateCache.url) {
-      return Promise.resolve(_templateCache.url)
+    if (_templateCache[url]) {
+      return Promise.resolve(_templateCache[url])
     } else {
-      return new Promise(function(resolve, reject) {
+      return (new Promise(function(resolve, reject) {
         _ajax(url, resolve, reject)
+      })).then(function(template) {
+        _templateCache[url] = template
+
+        return template
       })
     }
   }
