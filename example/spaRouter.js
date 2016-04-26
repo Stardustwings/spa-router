@@ -111,6 +111,23 @@ var spaRouter = (function(window) {
     }
   }
 
+  function _changeUrl(state, isUrlChange) {
+    var path = _getUrlByState(state),
+        url
+
+    if (_isHtml5Mode) {
+      if (isUrlChange) {
+        window.history.pushState(null, null, path)
+      }
+    } else {
+      url = window.location.origin + '#' + path
+
+      if (window.location.href !== url) {
+        window.location.href = url
+      }
+    }
+  }
+
   function init() {
     _isInit = true
 
@@ -138,9 +155,6 @@ var spaRouter = (function(window) {
   }
 
   function go(state, isUrlChange) {
-    var path,
-        url
-
     if (!state || !(state in _stateUrlMap)) {
       if (_defaultState) {
         state = _defaultState
@@ -154,19 +168,7 @@ var spaRouter = (function(window) {
       return
     }
 
-    path = _getUrlByState(state)
-
-    if (_isHtml5Mode) {
-      if (isUrlChange) {
-        window.history.pushState(null, null, path)
-      }
-    } else {
-      url = window.location.origin + '#' + path
-
-      if (window.location.href !== url) {
-        window.location.href = url
-      }
-    }
+    _changeUrl(state, isUrlChange)
 
     _currentState = state
 
