@@ -44,28 +44,30 @@ var spaRouter = (function(window) {
     })
   }
 
-  function _ajax(url, resolve, reject) {
-    var xhr = new XMLHttpRequest()
+  function _ajax(url) {
+    var xhr = new XMLHttpRequest(),
+        promise = new Promise(function(resolve, reject) {
+          xhr.onload = function() {
+            resolve(xhr.responseText)
+          }
+          xhr.onerror = function() {
+            reject('Ajax error')
+          }
+        })
 
-    xhr.onload = function() {
-      resolve(xhr.responseText)
-    }
-    xhr.onerror = function() {
-      reject('Ajax error')
-    }
     xhr.open('get', url)
     xhr.send()
+
+    return promise
   }
 
-  function _getTplPromise(state) {
+  function _getTemplate(state) {
     var url = _getTplUrlByState(state)
 
     if (_templateCache[url]) {
       return Promise.resolve(_templateCache[url])
     } else {
-      return (new Promise(function(resolve, reject) {
-        _ajax(url, resolve, reject)
-      })).then(function(template) {
+      return _ajax(url).then(function(template) {
         _templateCache[url] = template
 
         return template
@@ -91,7 +93,7 @@ var spaRouter = (function(window) {
         innerView = _rootView
 
     stateList.reduce(function(prePromise, state) {
-      var tplPromise = _getTplPromise(state)
+      var tplPromise = _getTemplate(state)
 
       return prePromise.then(function() {
         return tplPromise.then(function(template) {
